@@ -9,21 +9,13 @@ namespace Calculator
         private string previousInput = "";
         private string operation = "";
         private bool isOperationPressed = false;
+        private const int MaxDigits = 11;
 
         public Form1()
         {
             InitializeComponent();
             input_txtbox.Text = "0";
             textBox1.Text = "0";
-            input_txtbox.KeyPress += Input_txtbox_KeyPress;
-        }
-
-        private void Input_txtbox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (char.IsControl(e.KeyChar)) return;
-            if (char.IsDigit(e.KeyChar)) return;
-            if (e.KeyChar == '.' && !input_txtbox.Text.Contains(".")) return;
-            e.Handled = true;
         }
 
         private void UpdateInputTextBox()
@@ -51,6 +43,13 @@ namespace Calculator
             var btn = sender as Button;
             string num = btn.Text;
 
+            int digitCount = currentInput.Replace(".", "").Replace("-", "").Length;
+
+            if (digitCount >= MaxDigits && !isOperationPressed)
+            {
+                return;
+            }
+
             if (currentInput == "0" || isOperationPressed || currentInput == "")
             {
                 currentInput = num;
@@ -66,6 +65,12 @@ namespace Calculator
         private void period_Click(object sender, EventArgs e)
         {
             ClearErrorIfNeeded();
+
+            int digitCount = currentInput.Replace(".", "").Replace("-", "").Length;
+            if (digitCount >= MaxDigits && !isOperationPressed)
+            {
+                return;
+            }
 
             if (isOperationPressed || currentInput == "Error" || currentInput == "")
             {
